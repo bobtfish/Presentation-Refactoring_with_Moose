@@ -81,21 +81,37 @@ IF YOU HAVE TESTS
 
 =over
 
-=item Replace constructor with factory method (BUILD)
+=item *
 
-=item Encapsulate field (attributes)
+Replace constructor with factory method (BUILD)
 
-=item Change unidirectional association to bidirectional (weak => 1)
+=item *
 
-=item Hide delegate (handles)
+Encapsulate field (attributes)
 
-=item Extract interface (Roles)
+=item *
 
-=item Tease apart inheritance (Roles)
+Change unidirectional association to bidirectional (weak => 1)
 
-=item Replace inheritance with delegation (lazy_build)
+=item *
 
-=item Replace data value with object (type coercions)
+Hide delegate (handles)
+
+=item *
+
+Extract interface (Roles)
+
+=item *
+
+Tease apart inheritance (Roles)
+
+=item *
+
+Replace inheritance with delegation (lazy_build)
+
+=item *
+
+Replace data value with object (type coercions)
 
 =back
 
@@ -103,19 +119,33 @@ IF YOU HAVE TESTS
 
 =over
 
-=item Replace array with object (BUILDARGS, type coercions)
+=item *
 
-=item Duplicate observed data (handles, trigger, lazy_build)
+Replace array with object (BUILDARGS, type coercions)
 
-=item Encapsulate collection (MX::AttributeHelpers)
+=item *
 
-=item Replace type code with subclass (augment)
+Duplicate observed data (handles, trigger, lazy_build)
 
-=item Replace type code with strategy (MX::Traits)
+=item *
 
-=item Parameterize method (meta programming)
+Encapsulate collection (MX::AttributeHelpers)
 
-=item Remove setting method (is => ‘ro’, init_arg => undef)
+=item *
+
+Replace type code with subclass (augment)
+
+=item *
+
+Replace type code with strategy (MX::Traits)
+
+=item *
+
+Parameterize method (meta programming)
+
+=item *
+
+Remove setting method (is => ‘ro’, init_arg => undef)
 
 =back
 
