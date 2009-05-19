@@ -15,21 +15,45 @@ has pod_filename => ( isa => Str, is => 'ro', lazy_build => 1 );
 
 method _build_pod_filename {
     my $fn = $0;
-    $fn =~ s/\.p(lm)/.pod/;
+    $fn =~ s/\.p[lm]/.pod/;
     return $fn;
 }
 
-has html_filename => ( isa => Str, is => 'ro', lazy_build => 1 );
-
-method _build_html_filename {
+method _html_filename {
     $self->_s5_dir . '/index.html';
 }
 
 method _slurp_pod {
-    read_file($self->pod_filename);
+    my $file = read_file($self->pod_filename);
+    return $file;
 }
 
+has install_slides => ( isa => Bool, default => 0, is => 'ro' );
+has in_browser => ( isa => Bool, default => 0, is => 'ro');
+has browser => ( isa => Str, default => 'firefox', lazy => 1,
+    predicate => 'has_browser'
+);
+
 method run {
+    $self->_do_install_slides if $self->install_slides;
+    if ($self->has_browser || $self->in_browser) {
+        exec($self->browser, $self->_slides_uri);
+    }
+    else {
+        print $self->_slides_uri . "\n";
+    }
+}
+
+method _do_install_slides {
+    my $filename = $self->_html_filename;
+    my $fh;
+    open($fh, '>', $filename) or die;
+    print $fh $self->_build_slides;
+    close($fh);
+    return $filename;
+}
+
+method _build_slides {
     my $s5 = new Pod::S5(
               theme    => 'default',
               author   => 'root',
@@ -37,18 +61,13 @@ method run {
               where    => 'Perl Republic',
               company  => 'Perl Inc.',
               name     => 'A slide about perl');
-    my $filename = $self->html_filename;
-    my $fh;
-    open($fh, '>', $filename) or die;
-    print $fh $self->_change_location($s5->process($self->_slurp_pod));
-    close($fh);
-    my $uri = "file://$filename";
-    if (0) {
-        exec('firefox', $uri);
-    }
-    else {
-        print "$uri\n";
-    }
+    my $pod = $self->_slurp_pod;
+    return $self->_change_location($s5->process($self->_slurp_pod));
+}
+
+method _slides_uri {
+    my $filename = $self->_html_filename;
+    return "file://$filename";
 }
 
 method _dist_name {
