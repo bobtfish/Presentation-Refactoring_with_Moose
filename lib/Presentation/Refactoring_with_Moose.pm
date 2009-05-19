@@ -31,7 +31,7 @@ method _slurp_pod {
 has install_slides => ( isa => Bool, default => 0, is => 'ro' );
 has in_browser => ( isa => Bool, default => 0, is => 'ro');
 has browser => ( isa => Str, default => 'firefox', lazy => 1,
-    predicate => 'has_browser'
+    predicate => 'has_browser', is => 'ro',
 );
 
 method run {
