@@ -92,9 +92,9 @@ __DATA__
 ---
 theme: default
 author: Tomas Doran
-creation: 20090513
-where: Perl Republic
-company: Perl Inc.
-name: A slide about perl
+creation: 20090522
+where: Venda
+company: Tomas Doran 
+name: Rafactoring with Moose
 
 
