@@ -3,9 +3,10 @@ package # Hide from PAUSE
 use Pod::S5;
 use File::ShareDir qw/dist_dir/;
 use Moose;
-use MooseX::Types::Moose qw/Str/;
+use MooseX::Types::Moose qw/Str Bool/;
 use Method::Signatures::Simple;
 use File::Slurp qw/read_file/;
+use File::Temp qw/tempfile/;
 use namespace::autoclean;
 
 with 'MooseX::Getopt';
@@ -16,6 +17,12 @@ method _build_pod_filename {
     my $fn = $0;
     $fn =~ s/\.p(lm)/.pod/;
     return $fn;
+}
+
+has html_filename => ( isa => Str, is => 'ro', lazy_build => 1 );
+
+method _build_html_filename {
+    $self->_s5_dir . '/index.html';
 }
 
 method _slurp_pod {
@@ -30,7 +37,18 @@ method run {
               where    => 'Perl Republic',
               company  => 'Perl Inc.',
               name     => 'A slide about perl');
-    print $self->_change_location($s5->process($self->_slurp_pod));
+    my $filename = $self->html_filename;
+    my $fh;
+    open($fh, '>', $filename) or die;
+    print $fh $self->_change_location($s5->process($self->_slurp_pod));
+    close($fh);
+    my $uri = "file://$filename";
+    if (0) {
+        exec('firefox', $uri);
+    }
+    else {
+        print "$uri\n";
+    }
 }
 
 method _dist_name {
@@ -40,7 +58,7 @@ method _dist_name {
 }
 
 method _s5_dir {
-    dist_dir($self->_dist_name) . '/s5';
+    dist_dir($self->_dist_name);
 }
 
 sub _change_location {
