@@ -7,6 +7,7 @@ use MooseX::Types::Moose qw/Str Bool/;
 use Method::Signatures::Simple;
 use File::Slurp qw/read_file/;
 use File::Temp qw/tempfile/;
+use YAML qw/Load/;
 use namespace::autoclean;
 
 with 'MooseX::Getopt';
@@ -54,13 +55,11 @@ method _do_install_slides {
 }
 
 method _build_slides {
-    my $s5 = new Pod::S5(
-              theme    => 'default',
-              author   => 'root',
-              creation => '1.1.1979',
-              where    => 'Perl Republic',
-              company  => 'Perl Inc.',
-              name     => 'A slide about perl');
+    my $p = do {
+        local $/; # Slurpy
+        Load(<DATA>)
+    };
+    my $s5 = Pod::S5->new(%$p);
     my $pod = $self->_slurp_pod;
     return $self->_change_location($s5->process($self->_slurp_pod));
 }
@@ -90,4 +89,14 @@ sub _change_location {
 __PACKAGE__->meta->make_immutable;
 __PACKAGE__->new_with_options->run unless caller;
 1;
+
+__DATA__
+---
+theme: default
+author: Tomas Doran
+creation: 20090513
+where: Perl Republic
+company: Perl Inc.
+name: A slide about perl
+
 

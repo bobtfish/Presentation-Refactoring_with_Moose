@@ -5,6 +5,7 @@ name 'Presentation-Refactoring_with_Moose';
 all_from('lib/Presentation/Refactoring_with_Moose.pm');
 license 'perl';
 
+requires 'YAML';
 requires 'namespace::autoclean';
 requires 'Method::Signatures::Simple';
 requires 'File::Slurp';
