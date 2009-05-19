@@ -55,10 +55,8 @@ method _do_install_slides {
 }
 
 method _build_slides {
-    my $p = do {
-        local $/; # Slurpy
-        Load(<DATA>)
-    };
+    my $dh = do { no strict 'refs'; \*{blessed($self)."::DATA"} }; # eww
+    my $p = do { local $/; Load(<$dh>) }; # Slurpy
     my $s5 = Pod::S5->new(%$p);
     my $pod = $self->_slurp_pod;
     return $self->_change_location($s5->process($self->_slurp_pod));
