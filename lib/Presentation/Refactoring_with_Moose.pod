@@ -65,6 +65,7 @@ refactoring, right?
 
 Just converting to Moose is
 refactoring
+
 (in my book at least).
 
 
@@ -72,188 +73,136 @@ refactoring
 
 Just converting to Moose is
 refactoring
+
 IF YOU HAVE TESTS
 
 
-=head1 quux
+=head1 Part II - Common refactorings
 
-Part II - Common refactorings
-• Replace constructor with factory method (BUILD)
-• Encapsulate field (attributes)
-• Change unidirectional association to bidirectional
-(weak => 1)
-• Hide delegate (handles)
-• Extract interface (Roles)
-• Tease apart inheritance (Roles)
-• Replace inheritance with delegation (lazy_build)
-• Replace data value with object (type coercions)
-Page 14
-Part II - Common refactorings
-• Replace array with object (BUILDARGS, type
-coercions)
-• Duplicate observed data (handles, trigger, lazy_build)
-• Encapsulate collection (MX::AttributeHelpers)
-• Replace type code with subclass (augment)
-• Replace type code with strategy (MX::Traits)
-• Parameterize method (meta programming)
-• Remove setting method (is => ‘ro’, init_arg => undef)
-Page 15
-Part III - Moose with existing
-classes
+=over
 
-Moose with existing classes
-• Refactor gradually
-– From the top down..
-– Or the bottom up
-• You need tests
+=item Replace constructor with factory method (BUILD)
 
-Not inheriting a Moose::Object constructor (at all)
-– You lose:
-• BUILD
-• default,
-• builder,
-– Can still use:
-• lazy_build
-• Roles
-• Method modifiers
+=item Encapsulate field (attributes)
 
+=item Change unidirectional association to bidirectional (weak => 1)
 
-Not inheriting a Moose::Object
-destructor
-– Your own DESTROY method works just
+=item Hide delegate (handles)
+
+=item Extract interface (Roles)
+
+=item Tease apart inheritance (Roles)
+
+=item Replace inheritance with delegation (lazy_build)
+
+=item Replace data value with object (type coercions)
+
+=back
+
+=head1 Part II - Common refactorings
+
+=over
+
+=item Replace array with object (BUILDARGS, type coercions)
+
+=item Duplicate observed data (handles, trigger, lazy_build)
+
+=item Encapsulate collection (MX::AttributeHelpers)
+
+=item Replace type code with subclass (augment)
+
+=item Replace type code with strategy (MX::Traits)
+
+=item Parameterize method (meta programming)
+
+=item Remove setting method (is => ‘ro’, init_arg => undef)
+
+=back
+
+=head1 Part III - Moose with existing classes
+
+=head2 Refactor gradually
+
+=over
+
+=item From the top down..
+
+=item Or the bottom up
+
+=back
+
+=head2 You need tests
+
+=head1 Not inheriting a Moose::Object constructor (at all)
+
+=head2 You lose:
+
+=over
+
+=item BUILD
+
+=item default
+
+=item builder
+
+=back
+
+=head1 Can still use:
+
+=over
+
+=item lazy_build
+
+=item Roles
+
+=item Method modifiers
+
+=back
+
+=head1 Not inheriting a Moose::Object destructor
+
+Your own DESTROY method works just
 like usual, no DEMOLISH
 
-Don't go mad!
-1. Convert several independent parts of the same
-class hierarchy.
-2. Use different combinations of MooseX modules
-3. Write 3 of your own Moose::Exporter based
-things.
-– BANG. This will hurt you with metaclass
-incompatibility
+=head1 Don't go mad!
 
-Beware global destruction
-• Moving stuff onto the metaclass and delegating in
-DEMOLISH methods (especially using handles
+=over
+
+=item 1. Convert several independent parts of the same class hierarchy.
+
+=item 2. Use different combinations of MooseX modules
+
+=item 3. Write 3 of your own Moose::Exporter based things.
+
+=back
+
+=head2 BANG. This will hurt you with metaclass incompatibility
+
+=head1 Beware global destruction
+
+Moving stuff onto the metaclass and delegating in DEMOLISH methods (especially using handles
 and/or MooseX::ClassAttribute) will hurt you.
 Moose with existing classes
 
 
-Not inheriting a Moose::Object constructor (at all)
-– You lose:
-• BUILD
-• default,
-• builder,
-– Can still use:
-• lazy_build
-• Roles
-• Method modifiers
-
-
-Moose with existing classes
-• Not inheriting a Moose::Object
-destructor
-– Your own DESTROY method works just
-like usual, no DEMOLISH.
-
-Don't go mad!
-1. Convert several independent parts of the same
-class hierarchy.
-2. Use different combinations of MooseX modules
-3. Write 3 of your own Moose::Exporter based
-things.
-– BANG. This will hurt you with metaclass
-incompatibility.
-
-Beware global destruction
-• Moving stuff onto the metaclass and delegating in
-DEMOLISH methods (especially using handles
-and/or MooseX::ClassAttribute) will hurt you.
-• This is not really the fault of Moose, it’s due to the
+This is not really the fault of Moose, it’s due to the
 way global destruction works.
-– KISS
-– Did I mention tests?
-
-Summary
-• KISS
-• Write better code
-• Write less code
-• Write more tests
-
-
-=head1 Source Code
-
-=begin perl
-
-sub formatter_meta {
-  my ($text) = @_;
-  foreach (split /\n\n*/, $text) {
-    next if(/^\s*$/ or /^\s*#/);
-    s/\s*#.*$//; # we support comments
-    my ($tag, $param, $option) = split /\s\s*/;
-    if (! $option) {
-      $option = $param;
-      $param  = "";
-    }
-    print qq(<$tag $param>$option</$tag>\n);
-  }
-}
-
-=end perl
-
-=head1 Text Formatierung
-
-B<Fetter Text>
-
-I<Kursiver Text>
-
-U<Underline Text>
-
- Ein Code Einzeiler.
-
-=head2 Auch Listen gehen
 
 =over
 
-=item Eintrag 1
+=item KISS
 
-=item Eintrag 2
-
-=item Eintrag 3
+=item Did I mention tests?
 
 =back
 
-=head1 Oder auch Links
+=head1 Summary
 
-Einfacher Link: L<http://www.daemon.de>.
+=head2 KISS
 
-Benannter Link: L<Daemon|http://www.daemon.de>.
+=head2 Write better code
 
-=head1 Ein Bild
+=head2 Write less code
 
-G<t0m-cpan.png>
+=head2 Write more tests
 
-=head1 Incremental Liste
-
-=over
-
-=item *
-
-Zeile 1
-
-=item *
-
-Zeile 2
-
-=item *
-
-Zeile 3
-
-=back
-
-
-=head1 Haben Wollen ?
-
-B<pod2s5> ist auf dem CPAN verfuegbar.
-
-=cut
