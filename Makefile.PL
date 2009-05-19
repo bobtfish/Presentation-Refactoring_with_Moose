@@ -6,6 +6,7 @@ all_from('lib/Presentation/Refactoring_with_Moose.pm');
 license 'perl';
 
 requires 'Pod::S5' => '0.08';
+requires 'Syntax::Highlight::Engine::Kate' => '0.04';
 
 auto_install;
 WriteAll();
