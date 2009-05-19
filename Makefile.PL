@@ -18,5 +18,11 @@ requires 'File::ShareDir' => '1.00';
 install_share 'share';
 
 auto_install;
+
+postamble(<<EOF);
+install ::
+\t/usr/bin/env perl lib/Presentation/Refactoring_with_Moose.pm --install_slides
+EOF
+
 WriteAll();
 
