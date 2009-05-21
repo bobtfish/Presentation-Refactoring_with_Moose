@@ -6,13 +6,7 @@ Introducing Moose into a pre-
 existing codebase, tips for
 success and traps to watch for
 
-Tomas Doran:
-
-    irc: t0m
-    <br />
-    bobtfish@bobtfish.net
-    <br />
-    CPAN: BOBTFISH
+    Tomas Doran (t0m) &lt; bobtfish@bobtfish.net &gt;
 
 =head1 You may also know me from.
 
@@ -22,36 +16,48 @@ G<t0m-cpan.png>
 
 =over
 
-=item Is not a project.
+=item *
 
-=item Does not add functionality.
+Is not a project.
 
-=item Does not take long.
+=item *
 
-=item Needs tests (I will say this again)
+Does not add functionality.
 
-=item Is something you should do as you write code.
+=item *
 
-=item Can also be retrofitted (after you write tests)
+Does not take long.
+
+=item *
+
+Needs tests (I will say this again)
+
+=item *
+
+Is something you should do as you write code.
+
+=item *
+
+Can also be retrofitted (after you write tests)
 
 =back
 
-=head1 Foo
+=head1
 
     'Any fool can write code that a computer
     understands. Only a good programmer
     can write code that a human
-    understands’
+    understands'
 
 - Martin Fowler
 
-=head1 bar
+=head1
 
 =over
 
 =item *
 
- Moose helps me write more consise,
+Moose helps me write more consise,
 easier to understand code.
 
 =item *
@@ -61,21 +67,18 @@ refactoring, right?
 
 =back
 
-=head1 quux
+=head1
 
-Just converting to Moose is
-refactoring
-
-(in my book at least).
+Writing classes, or converting current classes, and class structures
+to idiomatic Moose classes is equivalent to refatoring.
 
 
-=head1 baa
+=head1
 
-Just converting to Moose is
-refactoring
+Writing classes, or converting current classes, and class structures
+to idiomatic Moose classes is equivalent to refatoring.
 
-IF YOU HAVE TESTS
-
+<b>IF YOU HAVE TESTS</b>
 
 =head1 Part II - Common refactorings
 
@@ -83,7 +86,7 @@ IF YOU HAVE TESTS
 
 =item *
 
-Replace constructor with factory method (BUILD)
+Replace constructor with factory method (has & BUILD)
 
 =item *
 
@@ -109,11 +112,209 @@ Tease apart inheritance (Roles)
 
 Replace inheritance with delegation (lazy_build)
 
-=item *
-
-Replace data value with object (type coercions)
-
 =back
+
+=head1 Replace constructor with factory method
+
+=begin perl
+
+    package MyClass;
+    use strict;
+    use warnings;
+
+    sub new {
+        my ($class, %args) = @_; # Maybe, or several other patterns
+        if (!$args{foo}) {
+            die("No foo");
+        }
+        # Lots more code like this
+        bless \%args, $class;
+    }
+
+=end perl
+
+=head1 Replace constructor with factory method
+
+=begin perl
+
+    package MyClass;
+    use Moose;
+
+    has foo => ( is => 'rw', required => 1 );
+
+=end perl
+
+=head1 Encapsulate field (attributes)
+
+=begin perl
+
+    sub attribute_list {
+        my ($self) = @_;
+        $self->{attribute_list} ||= [];
+    }
+
+    push(@{$thing->attribute_list}, 'item');
+    warn(sprintf("Have %s attributes", scalar(@{$thing->attribute_list})));
+
+=end perl
+
+=head1 Encapsulate field (attributes)
+
+=begin perl
+
+    has => _attribute_list => (
+        is => 'ro', default => sub { [] }
+        metaclass => 'Collection::Hash',
+        provides => {
+            count => 'number_of_attributes',
+            add => 'add_attribute',
+        },
+    );
+
+    $thing->add_attribute('item');
+    warn(sprintf("Have %s attributes", $thing->number_of_attributes));
+
+=end perl
+
+=head1 Hide delegate (handles)
+
+=begin perl
+
+    package Foo;
+
+    sub thing {
+        my ($self) = @_;
+        $self->{thing} ||= Thing->new($self->_new_thing_options);
+    }
+
+    my $baz = $foo->thing->some_method_on_thing;
+    $foo->thing->some_other_method_on_thing($bar * 2);
+    # YOU JUST BROKE THE LAW OF DEMETER.
+
+=end perl
+
+=head1 Hide delegate (handles)
+
+=begin perl
+
+    package Foo;
+
+    has _thing => ( 
+        isa => 'Thing', is => 'ro', builder => '_build_thing'
+        handles => {
+            get_record_list => 'some_method_on_thing',
+            set_record_price => 'some_other_method_on_thing',
+        }
+    );
+
+    sub _build_thing { Thing->new($_[0]->_new_thing_options) }
+
+
+    my $baz = $foo->get_record_list;
+    $foo->set_record_price($bar * 2);
+
+=end perl
+
+=head1 Extract interface (Roles)
+
+=begin perl
+
+    package Dog;
+
+    sub bark { warn('woof'); }
+    sub fur { warn('fluufy'); }
+    sub pet {
+        my ($self, $petter) = @_;
+        warn("Drool all over " . $petter->name);
+    }
+
+=end perl
+
+=head1 Extract interface (Roles) 2
+
+=begin perl
+
+    package Dog::Breed::Rottweiler;
+    use base qw/Dog/;
+
+    sub pet {
+        my ($self, $petter, @args) = @_;
+        if ($petter->age < 12) {
+            $self->savage($petter);
+        }
+        else {
+            $self->SUPER::pet($petter, @args);
+        }
+    }
+
+=end perl
+
+=head1 Extract interface (Roles) 3
+
+=begin perl
+
+    package DogLover;
+
+    sub show_thing_to {
+        my ($self, $thing) = @_;
+
+        if ($thing->can('bark')) { # It's a dog, pet it!
+            $self->pet($thing);
+        }
+        else {
+            warn("Meh!");
+        }
+    }
+
+    $doglover->show_thing_to( Tree->new );
+    # Oh dear. Tree->bark was NOT the method you expected..
+
+=end perl
+
+=head1 Extract interface (Roles) 3
+
+=begin perl
+
+    package Dog;
+    use Moose::Role;
+
+    requires qw/
+        bark
+        fur
+        pet
+    /;
+
+    package Dog::Generic;
+    use Moose;
+
+    with 'Dog';
+
+    sub bark { warn('woof'); }
+    sub fur { warn('fluufy'); }
+    sub pet { ...
+
+    package Dog::Breed:Rottweiler:
+    use Moose;
+
+    extends 'Dog::Generic';
+    # Etc..
+
+    if ( does_role( $thing, 'Dog' ) ) { # It's a dog, pet it!
+        $self->pet($thing);
+
+=end perl
+
+=head1 Tease apart inheritance (Roles)
+
+=begin perl
+
+=end perl
+
+=head1 Replace inheritance with delegation (lazy_build)
+
+=begin perl
+
+=end perl
 
 =head1 Part II - Common refactorings
 
@@ -146,6 +347,10 @@ Parameterize method (meta programming)
 =item *
 
 Remove setting method (is => ‘ro’, init_arg => undef)
+
+=item *
+
+Replace data value with object (type coercions)
 
 =back
 

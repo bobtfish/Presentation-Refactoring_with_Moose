@@ -20,7 +20,7 @@ div#footer {top: auto; bottom: 0; height: 2.5em;}
 div.slide {top: 0; width: 92%; padding: 3.5em 4% 4%;}
 /*div#controls {left: 50%; top: 0; width: 50%; height: 100%;}
 #footer>*/
-div#controls {bottom: 0; top: auto; height: auto;}
+div#controls {bottom: 0; top: auto; height: auto; z-index: 50;}
 
 div#controls form {position: absolute; bottom: 0; right: 0; width: 100%;
   margin: 0;}
@@ -45,6 +45,7 @@ body {background: transparent url(pixelbg.gif) repeat-y; color: #08093F; font-si
 #controls :active {color: #88A !important;}
 #controls :focus {outline: 1px dotted #227;}
 h1, h2, h3, h4 {font-size: 100%; margin: 0; padding: 0; font-weight: inherit;}
+h1 { position: relative; top: -1em }
 ul, pre {margin: 0; line-height: 1em;}
 html, body {margin: 0; padding: 0;}
 
@@ -81,7 +82,7 @@ div.long {font-size: 0.75em;}
 .slide h1 {position: absolute; z-index: 1;
   margin: 0; padding: 0.3em 0 0 50px; white-space: nowrap;
   font: bold 150%/1em Helvetica, sans-serif; text-transform: capitalize;
-  top: 1.4em; left: 2%;
+  top: 1.0em; left: 2%;
   color: #08093F; background: transparent;}
 .slide h3 {font-size: 130%;}
 h1 abbr {font-variant: small-caps;}
