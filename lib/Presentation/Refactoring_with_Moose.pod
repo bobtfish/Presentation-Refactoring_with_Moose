@@ -107,7 +107,7 @@ Can also be retrofitted (after you write tests)
 
 =item *
 
-Moose helps me write more consise,
+Moose helps me write more concise,
 easier to understand code.
 
 =item *
@@ -119,11 +119,11 @@ refactoring, right?
 
 =head1
 
-B<YES>. If you can turn poopy code into 
+B<YES>. If you can turn poop code into 
 idiomatic Moose classes without breaking sh*t as you don't
 have enough tests, that's refactoring.
 
-Fairly easy in practice, given you wrote good tests.
+Fairly easy in practise, given you wrote good tests.
 
 =head1 YOU NEED TESTS
 
@@ -305,7 +305,7 @@ Remove setting method (is => 'ro', init_arg => undef)
     package Dog;
 
     sub bark { warn('woof'); }
-    sub fur { warn('fluufy'); }
+    sub fur { warn('fluffy'); }
     sub pet {
         my ($self, $petter) = @_;
         warn("Drool all over " . $petter->name);
@@ -379,7 +379,7 @@ Remove setting method (is => 'ro', init_arg => undef)
     with 'Dog';
 
     sub bark { warn('woof'); }
-    sub fur { warn('fluufy'); }
+    sub fur { warn('fluffy'); }
     sub pet { ...
 
 =end perl
@@ -643,13 +643,13 @@ Class attributes are generally wrong anyway, most things should be instance data
 
 =item Class data & God objects are bad
 
-=item Multiple inheritence is bad
+=item Multiple inheritance is bad
 
 =item Delegation uber alles
 
-=item Composition usually superior to inheritence
+=item Composition usually superior to inheritance
 
-=item Don't put everything in instance data, your clients should call methods with prameters
+=item Don't put everything in instance data, your clients should call methods with parameters
 
 =item If you can hide your data, and expose instead operations on that data, do so!
 
