@@ -658,3 +658,6 @@ Class attributes are generally wrong anyway, most things should be instance data
 =head1 Questions?
 
 Anyone?
+
+    http://github.com/bobtfish/Presentation-Refactoring_with_Moose/tree/master
+
