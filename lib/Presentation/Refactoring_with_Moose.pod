@@ -3,16 +3,59 @@
 =head1 Refactoring with Moose
 
 Introducing Moose into a pre-
-existing codebase, tips for
-success and traps to watch for
+existing codebase, whist refactoring. Techniques and tips for
+success and traps to watch for.
 
     Tomas Doran (t0m) &lt; bobtfish@bobtfish.net &gt;
 
-=head1 You may also know me from.
+=head1 Lies and fail
 
-G<t0m-cpan.png>
+These slides are likely to be full of lies.
 
-=head1 Part 1 - Refactoring
+Please interrupt me at any point to pedantically point out said lies when you spot them.
+
+I would.
+
+=head1 Spoiling the fun
+
+Anyone who does point out a mistake wins a prize:
+
+    http://github.com/bobtfish/Presentation-Refactoring_with_Moose/tree/master
+
+B<Patches welcome>
+
+=head1 Who?
+
+=over
+
+=item Used to work at Venda (Hi anyone I don't know already!)
+
+=item Catalyst core team
+
+=item Moose committer
+
+=item Has a module called L<MooseX::MethodAttributes::Role::Meta::Role> on CPAN
+
+=item Is not proud of this
+
+=item Has silly hair
+
+=item Never writes bugs
+
+=back
+
+=head1 Last slide may contain up to one lie
+
+=head1 Meditation
+
+    'Any fool can write code that a computer
+    understands. Only a good programmer
+    can write code that a human
+    understands'
+
+- Martin Fowler
+
+=head1 Refactoring
 
 =over
 
@@ -42,14 +85,21 @@ Can also be retrofitted (after you write tests)
 
 =back
 
-=head1
+=head1 Moose?
 
-    'Any fool can write code that a computer
-    understands. Only a good programmer
-    can write code that a human
-    understands'
+=over
 
-- Martin Fowler
+=item It lets you express yourself more clearly, avoids bugs and encourages you to write better factored software.
+
+=item It's what all the cool kids are using.
+
+=item Naysayers tell you it's slow - it B<does> have a startup cost.
+
+=item Catalyst got 20% faster (on perl 5.10) when ported to Moose.
+
+=item Go read Moose::Manual
+
+=back
 
 =head1
 
@@ -69,18 +119,17 @@ refactoring, right?
 
 =head1
 
-Writing classes, or converting current classes, and class structures
-to idiomatic Moose classes is equivalent to refatoring.
+B<YES>. If you can turn poopy code into 
+idiomatic Moose classes without breaking sh*t as you don't
+have enough tests, that's refactoring.
 
+Fairly easy in practice, given you wrote good tests.
 
-=head1
+=head1 YOU NEED TESTS
 
-Writing classes, or converting current classes, and class structures
-to idiomatic Moose classes is equivalent to refatoring.
+Or you B<will> hurt yourself.
 
-<b>IF YOU HAVE TESTS</b>
-
-=head1 Part II - Common refactorings
+=head1 Some common refactorings
 
 =over
 
@@ -110,11 +159,11 @@ Tease apart inheritance (Roles)
 
 =item *
 
-Replace inheritance with delegation (lazy_build)
+Replace inheritance with delegation Roles & builder)
 
 =back
 
-=head1 Part II - Common refactorings
+=head1 Common refactorings 2
 
 =over
 
@@ -146,13 +195,9 @@ Replace type code with strategy (MX::Traits)
 
 Remove setting method (is => 'ro', init_arg => undef)
 
-=item *
-
-Replace data value with object (type coercions)
-
 =back
 
-=head1 Replace constructor with factory method
+=head1 Replace constructor with factory method 1
 
 =begin perl
 
@@ -171,7 +216,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Replace constructor with factory method
+=head1 Replace constructor with factory method 2
 
 =begin perl
 
@@ -182,7 +227,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Encapsulate field (attributes)
+=head1 Encapsulate field 1
 
 =begin perl
 
@@ -196,7 +241,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Encapsulate field (attributes)
+=head1 Encapsulate field 2
 
 =begin perl
 
@@ -214,7 +259,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Hide delegate (handles)
+=head1 Hide delegate 1
 
 =begin perl
 
@@ -231,7 +276,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Hide delegate (handles)
+=head1 Hide delegate 2
 
 =begin perl
 
@@ -253,7 +298,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Extract interface (Roles)
+=head1 Extract interface 1
 
 =begin perl
 
@@ -268,7 +313,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Extract interface (Roles) 2
+=head1 Extract interface 2
 
 =begin perl
 
@@ -278,7 +323,7 @@ Replace data value with object (type coercions)
     sub pet {
         my ($self, $petter, @args) = @_;
         if ($petter->age < 12) {
-            $self->savage($petter);
+            $self->attack($petter);
         }
         else {
             $self->SUPER::pet($petter, @args);
@@ -287,7 +332,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Extract interface (Roles) 3
+=head1 Extract interface 3
 
 =begin perl
 
@@ -309,7 +354,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Extract interface (Roles) 3
+=head1 Extract interface 4
 
 =begin perl
 
@@ -324,7 +369,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Extract Interface (Roles) 4
+=head1 Extract Interface 5
 
 =begin perl
 
@@ -339,7 +384,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Extract Interface (Roles) 5
+=head1 Extract Interface 6
 
 =begin perl
 
@@ -354,7 +399,7 @@ Replace data value with object (type coercions)
 
 =end perl
 
-=head1 Tease apart inheritance (Roles)
+=head1 Tease apart inheritance 1
 
 =begin perl
 
@@ -379,7 +424,7 @@ EPIC FAIL! Is that really the right order?
 
 If any of your base classes multiply inherit, you have no idea!
 
-=head1 Tease apart inheritance (Roles)
+=head1 Tease apart inheritance 2
 
 =begin perl
 
@@ -398,7 +443,7 @@ If any of your base classes multiply inherit, you have no idea!
 
 =end perl
 
-=head1 Replace inheritance with delegation (lazy_build)
+=head1 Replace inheritance with delegation 1
 
 =begin perl
 
@@ -414,7 +459,7 @@ If any of your base classes multiply inherit, you have no idea!
 
 =end perl
 
-=head1 Replace inheritance with delegation (lazy_build)
+=head1 Replace inheritance with delegation 2
 
 =begin perl
 
@@ -432,7 +477,7 @@ If any of your base classes multiply inherit, you have no idea!
 
 =end perl
 
-=head1 Replace inheritance with delegation (lazy_build)
+=head1 Replace inheritance with delegation 3
 
 =begin perl
 
@@ -446,6 +491,7 @@ If any of your base classes multiply inherit, you have no idea!
             update
             delete
         /],
+        weak => 1,
     );
 
 =end perl
@@ -453,11 +499,11 @@ If any of your base classes multiply inherit, you have no idea!
 Note how you just got sharding B<for free>, as each object knows which data
 store it belongs to.
 
-=head1 Replace data value with object (type coercions)
+=head1 Replace data value with object 1
 
-=head1 Replace type code with subclass (augment)
+=head1 Replace type code with subclass (augment) 1
 
-=head1 Part III - Moose with existing classes
+=head1 Moose with existing classes
 
 =head2 Refactor gradually
 
@@ -469,9 +515,9 @@ store it belongs to.
 
 =back
 
-=head2 You need tests
+B<You need tests>
 
-=head1 Not inheriting a Moose::Object constructor (at all)
+=head1 Not inheriting Moose constructor
 
 =head2 You lose:
 
@@ -550,9 +596,15 @@ Class attributes are generally wrong anyway, most things should be instance data
 
 =item Refactor often
 
+=back
+
+=head1 Rants (redux)
+
+=over
+
 =item Small methods
 
-=item Class data God objects are bad
+=item Class data & God objects are bad
 
 =item Multiple inheritence is bad
 
@@ -560,9 +612,12 @@ Class attributes are generally wrong anyway, most things should be instance data
 
 =item Composition usually superior to inheritence
 
-=item Don't put everything in instance data, methods should have parameters!
+=item Don't put everything in instance data, your clients should call methods with prameters
+
+=item If you can hide your data, and expose instead operations on that data, do so!
 
 =back
 
 =head1 Questions?
 
+Anyone?
