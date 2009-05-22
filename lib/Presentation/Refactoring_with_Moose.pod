@@ -114,6 +114,44 @@ Replace inheritance with delegation (lazy_build)
 
 =back
 
+=head1 Part II - Common refactorings
+
+=over
+
+=item *
+
+Replace data value with object (type coercions)
+
+=item *
+
+Replace type code with subclass (augment)
+
+=item *
+
+Replace array with object (BUILDARGS, type coercions)
+
+=item *
+
+Duplicate observed data (handles, trigger, lazy_build)
+
+=item *
+
+Encapsulate collection (MX::AttributeHelpers)
+
+=item *
+
+Replace type code with strategy (MX::Traits)
+
+=item *
+
+Remove setting method (is => 'ro', init_arg => undef)
+
+=item *
+
+Replace data value with object (type coercions)
+
+=back
+
 =head1 Replace constructor with factory method
 
 =begin perl
@@ -162,7 +200,7 @@ Replace inheritance with delegation (lazy_build)
 
 =begin perl
 
-    has => _attribute_list => (
+    has _attribute_list => (
         is => 'ro', default => sub { [] }
         metaclass => 'Collection::Hash',
         provides => {
@@ -284,6 +322,12 @@ Replace inheritance with delegation (lazy_build)
         pet
     /;
 
+=end perl
+
+=head1 Extract Interface (Roles) 4
+
+=begin perl
+
     package Dog::Generic;
     use Moose;
 
@@ -292,6 +336,12 @@ Replace inheritance with delegation (lazy_build)
     sub bark { warn('woof'); }
     sub fur { warn('fluufy'); }
     sub pet { ...
+
+=end perl
+
+=head1 Extract Interface (Roles) 5
+
+=begin perl
 
     package Dog::Breed:Rottweiler:
     use Moose;
@@ -308,51 +358,104 @@ Replace inheritance with delegation (lazy_build)
 
 =begin perl
 
+package My::Class;
+
+# This may contain up to one lie, can you spot it?
+use base qw/
+    My::DatabaseBacked
+    My::UniqueId
+    My::QueryCache
+    My::DisplayableClass
+    My::Utils
+    My::Mixin::Foo
+    My::Mixin::Bar
+/;
+
+    sub _display_type { 'Listbox' }
+
+=end perl
+
+EPIC FAIL! Is that really the right order?
+
+If any of your base classes multiply inherit, you have no idea!
+
+=head1 Tease apart inheritance (Roles)
+
+=begin perl
+
+    package My::Class;
+    use Moose;
+    use My::DatabasePersistence;
+    use My::Utils;
+    use namespace::autoclean;
+    does qw/  Persistent FooLike BarLike Displayable /;
+    
+    # Note that the 'persistence' attribute from the Persistent role
+    # will use handles => to give you all the methods you used to get
+    # from 'database backed' and 'query cache' will wrap those methods.
+    has '+persistence_class' => ( default => 'Cached' );
+    has '+id_type' => ( default => 'Unique' );
+
 =end perl
 
 =head1 Replace inheritance with delegation (lazy_build)
 
 =begin perl
 
+    package MyClass;
+    use base qw/Persistent/;
+
+    sub id { rand(10000) }
+
+    my $thing = MyClass->new;
+    $thing->insert;
+    $thing->attr(20);
+    $thing->update;
+
 =end perl
 
-=head1 Part II - Common refactorings
+=head1 Replace inheritance with delegation (lazy_build)
 
-=over
+=begin perl
 
-=item *
+    package MyClass;
 
-Replace array with object (BUILDARGS, type coercions)
+    with 'Persistent';
 
-=item *
+    sub id { rand(10000) }
 
-Duplicate observed data (handles, trigger, lazy_build)
+    my $p = Persistence::Engine->new(%p);
+    my $thing = MyClass->new( _persistence => $p );
+    $thing->insert;
+    $thing->attr(20);
+    $thing->update;
 
-=item *
+=end perl
 
-Encapsulate collection (MX::AttributeHelpers)
+=head1 Replace inheritance with delegation (lazy_build)
 
-=item *
+=begin perl
 
-Replace type code with subclass (augment)
+    package Persistent;
+    use Moose::Role;
 
-=item *
+    has _persistence => (
+        does => 'Persistence::Engine', required => 1, is => 'ro',
+        handles => [qw/
+            insert
+            update
+            delete
+        /],
+    );
 
-Replace type code with strategy (MX::Traits)
+=end perl
 
-=item *
+Note how you just got sharding B<for free>, as each object knows which data
+store it belongs to.
 
-Parameterize method (meta programming)
+=head1 Replace data value with object (type coercions)
 
-=item *
-
-Remove setting method (is => ‘ro’, init_arg => undef)
-
-=item *
-
-Replace data value with object (type coercions)
-
-=back
+=head1 Replace type code with subclass (augment)
 
 =head1 Part III - Moose with existing classes
 
@@ -411,17 +514,19 @@ like usual, no DEMOLISH
 
 =back
 
-=head2 BANG. This will hurt you with metaclass incompatibility
+B<BANG>. 
+
+This will hurt you with metaclass incompatibility
 
 =head1 Beware global destruction
 
 Moving stuff onto the metaclass and delegating in DEMOLISH methods (especially using handles
 and/or MooseX::ClassAttribute) will hurt you.
-Moose with existing classes
 
-
-This is not really the fault of Moose, it’s due to the
+This is not really the fault of Moose, it's due to the
 way global destruction works.
+
+Class attributes are generally wrong anyway, most things should be instance data, or factored out.
 
 =over
 
@@ -433,11 +538,31 @@ way global destruction works.
 
 =head1 Summary
 
-=head2 KISS
+=over
 
-=head2 Write better code
+=item KISS
 
-=head2 Write less code
+=item Write better code
 
-=head2 Write more tests
+=item Write less code
+
+=item Write more tests
+
+=item Refactor often
+
+=item Small methods
+
+=item Class data God objects are bad
+
+=item Multiple inheritence is bad
+
+=item Delegation uber alles
+
+=item Composition usually superior to inheritence
+
+=item Don't put everything in instance data, methods should have parameters!
+
+=back
+
+=head1 Questions?
 
