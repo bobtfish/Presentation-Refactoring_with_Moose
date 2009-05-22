@@ -94,7 +94,7 @@ theme: default
 author: Tomas Doran
 creation: 20090522
 where: Venda
-company: Tomas Doran 
-name: Rafactoring with Moose
+company: Tomas Doran
+name: Refactoring with Moose
 
 

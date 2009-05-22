@@ -433,8 +433,8 @@ If any of your base classes multiply inherit, you have no idea!
     use My::DatabasePersistence;
     use My::Utils;
     use namespace::autoclean;
-    does qw/  Persistent FooLike BarLike Displayable /;
-    
+    with qw/  Persistent FooLike BarLike Displayable /;
+
     # Note that the 'persistence' attribute from the Persistent role
     # will use handles => to give you all the methods you used to get
     # from 'database backed' and 'query cache' will wrap those methods.
