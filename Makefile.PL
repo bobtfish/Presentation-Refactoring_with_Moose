@@ -11,7 +11,7 @@ requires 'Method::Signatures::Simple';
 requires 'File::Slurp';
 requires 'Moose';
 requires 'MooseX::Types';
-requires 'MooseX::Getopt';
+requires 'MooseX::Getopt' => '0.18';
 requires 'Pod::S5' => '0.08';
 requires 'Syntax::Highlight::Engine::Kate' => '0.04';
 requires 'File::ShareDir' => '1.00';
