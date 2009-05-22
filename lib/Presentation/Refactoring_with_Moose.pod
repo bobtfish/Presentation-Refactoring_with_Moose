@@ -490,8 +490,7 @@ If any of your base classes multiply inherit, you have no idea!
             insert
             update
             delete
-        /],
-        weak => 1,
+        /], weak => 1,
     );
 
 =end perl
@@ -501,7 +500,45 @@ store it belongs to.
 
 =head1 Replace data value with object 1
 
-=head1 Replace type code with subclass (augment) 1
+=begin perl
+
+package Turtle;
+use Moose;
+with qw/ Teenage Mutant Ninja /;
+
+package Ninja;
+use Moose::Role;
+
+has weapon =>( is => 'ro' );
+sub attack {
+    my ($self) = @_;
+    if ($self->weapon eq 'katana') {
+        warn($self->name . " slices.."); # Leonardo
+    } elsif ($self->weapon eq 'sais') {
+        warn($self->name . " spikes.."); # Raphael
+    # etc. LAME!
+
+=end perl
+
+=head1 Replace data value with object 2
+
+=begin perl
+
+package Weapon;
+use Moose::Role;
+
+requires 'attack';
+
+package Ninja;
+
+has weapon ( is => 'ro', does => 'Weapon', coerce => 1, required => 1 );
+
+sub attack {
+    my ($self, @args) = @_;
+    $self->weapon->attack($self, @args);
+}
+
+=end perl
 
 =head1 Moose with existing classes
 
